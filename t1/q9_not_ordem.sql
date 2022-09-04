@@ -1,4 +1,4 @@
-select count(*)
+select count(C_CUSTKEY)
 from (
     select C_CUSTKEY
     from CUSTOMER
