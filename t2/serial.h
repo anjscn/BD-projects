@@ -7,8 +7,11 @@
  * @date 2022-09-04
 **/
 
-#include "serial.h"
+#ifndef __SERIAL__
+#define __SERIAL__
+    #include "transacao.h"
 
-check_serial(transacao_t* escalation, int n){
+    // Checa se as n primeiras transições são serializaveis
+    check_serial(transacao_t* escalation, int n);
 
-}
+#endif
