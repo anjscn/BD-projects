@@ -8,6 +8,7 @@
 **/
 
 #include <stdio.h>
+#include "serial.h"
 #include "transacao.h"
 
 

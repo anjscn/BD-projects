@@ -9,9 +9,17 @@
 
 #ifndef __SERIAL__
 #define __SERIAL__
-    #include "transacao.h"
+    #include "header.h"
+
+
+    typedef struct vertice_t {
+        int id;
+        struct vertice_t** reachables;
+    } vertice_t;
+
+
 
     // Checa se as n primeiras transições são serializaveis
-    check_serial(transacao_t* escalation, int n);
+    int check_serial(transacao_t **escalation, int n);
 
 #endif

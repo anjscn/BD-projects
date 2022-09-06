@@ -15,4 +15,22 @@
  * 
  */
 
+
+    #define MAX_TRANSACOES 10
+    #define MAX_OPS 50
+
+
+    typedef struct operacoes_t{
+        int time;
+        char operation;
+        char attribute;
+    } operacoes_t;
+
+    typedef struct transacao_t{
+        int transation_id;
+        int num_ops;
+        operacoes_t* ops[MAX_OPS * sizeof(operacoes_t*)];
+    } transacao_t;
+
+
 #endif

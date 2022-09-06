@@ -1,6 +1,5 @@
 #include "transacao.h"
 
-
 int num_transicoes;
 int num_active_transactions;
 
@@ -118,10 +117,7 @@ int print_transactions(){
 
 
 int is_serial(){
-
-    check_serial(transacao_list, num_transicoes);
-
-    return FAIL_RETURN;
+    return check_serial(transacao_list, num_transicoes);
 }
 
 int is_equivalent(){
@@ -131,8 +127,6 @@ int is_equivalent(){
 
 int check_serial_equivalent(){
 
-    int serial = 0;
-    int equivalent = 0;
 
 
     fprintf(stdout, "%d ", num_escalonamento_finalizado);
@@ -144,12 +138,9 @@ int check_serial_equivalent(){
     fprintf(stdout, "%d ", transacao_list[num_transicoes-1]->transation_id);
 
 
-    serial = is_serial();
-    equivalent = is_equivalent();
 
-
-    ( serial ? fprintf(stdout, "SS ") : fprintf(stdout, "NS ") );
-    ( equivalent ? fprintf(stdout, "SV\n") : fprintf(stdout, "NV\n") );
+    ( is_serial() ? fprintf(stdout, "SS ") : fprintf(stdout, "NS ") );
+    ( is_equivalent() ? fprintf(stdout, "SV\n") : fprintf(stdout, "NV\n") );
 
 
     return FAIL_RETURN;
