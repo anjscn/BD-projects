@@ -11,24 +11,50 @@
 
 transacao_t **original;
 
-/* Function to swap values at 
-   two pointers */
-void troca(transacao_t *a , transacao_t *b ) 
-{ 
-    //fprintf(stderr, "> trocando %d com %d\n", a->transation_id, b->transation_id);
-    transacao_t temp = *a;
-    *a = *b;
-    *b = temp;
 
-} 
+void troca(transacao_t **e, int l, int i ) { 
+    transacao_t* temp = e[l];
+    e[l] = e[i];
+    e[i] = temp;
+}
 
-void compara(transacao_t **a, transacao_t **b, int n){
+// retorna o id da ultima transacao que tem o ultimo write
+// retorna -1 caso não encontre escrita
+int seleciona_ultima_escrita(transacao_t** e, int n){
+    for(int i = n-1; i >=0; i--) {
+        for (int j = e[i]->num_ops-1; j >= 0; j--) {
+            if(e[i]->ops[j]->operation == WRITE){
+                return e[i]->transation_id;
+            }   
+        }
+    }
+    return -1;
+}
+
+int valida_ultimo(transacao_t **a, int n){
+
+    int id_last_w_original = seleciona_ultima_escrita(original, n);
+    int id_last_w_a = seleciona_ultima_escrita(a, n);
+
+    fprintf(stderr, "<-original: %d a: %d\n", id_last_w_original, id_last_w_a);
+
+    if(id_last_w_original == -1){ return 0;}    
+    if(id_last_w_a != id_last_w_original){ return 0; }
+    fprintf(stderr, "<-GAYYY: %d a: %d\n", id_last_w_original, id_last_w_a);
+
+
+    return 1;
+}
+
+int compara(transacao_t **a, int n){
+    if(!valida_ultimo(a, n)) return -1;
+
     for(int i = 0; i < n; i++){
 
     }
 
 
-
+    return 0;
 }
 
 
@@ -48,15 +74,15 @@ int permuta (transacao_t** e, int l, int r){
     //fprintf(stderr, "P %d %d\n", l, r);
 
     if(l == r){
-        printa(e, r);
-        compara(e, original, r);
+        // printa(e, r);
+        // printa(original, r);
+        if(compara(e, r) == -1) return -1;
     }
 
-
     for(int i = l; i < r; i++){
-        troca(e[l], e[i]);
-        permuta(e, l+1, r);
-        troca(e[l], e[i]);
+        troca(e, l, i);
+        if(permuta(e, l+1, r) == -1) return -1;
+        troca(e, l, i);
     }
     return 0;
 }
@@ -70,6 +96,11 @@ int check_view(transacao_t **escalation, int n){
         permutada[i] = original[i];
     }
 
-    permuta(permutada, 0, n);
+    int p = permuta(permutada, 0, n);
+
+    free(permutada);
+
+    if(p == -1)
+        return 0;
     return 1;
 }

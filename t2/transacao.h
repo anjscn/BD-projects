@@ -10,9 +10,7 @@
     #define SUCCESS_RETURN 1
     #define FAIL_RETURN 0
 
-    #define COMMIT 'C'
-    #define READ 'R'
-    #define WRITE 'W'
+
 
     extern int num_active_transactions;
 

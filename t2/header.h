@@ -14,7 +14,9 @@
  * @brief 
  * 
  */
-
+    #define COMMIT 'C'
+    #define READ 'R'
+    #define WRITE 'W'
 
     #define MAX_TRANSACOES 10
     #define MAX_OPS 50

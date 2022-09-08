@@ -121,7 +121,10 @@ int is_serial(){
 }
 
 int is_equivalent(){
-    return check_view(transacao_list, num_transicoes);
+    int a =check_view(transacao_list, num_transicoes); 
+    fprintf(stderr, "Equivalencia %d\n", a);
+    
+    return a;
 }
 
 
