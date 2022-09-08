@@ -102,6 +102,16 @@ int new_edge(transacao_t *t1, transacao_t *t2){
     return SUCCESS_RETURN;
 }
 
+// dá free em tudo o que precisa
+void destroy_serial(){
+    for (int i = 0; i < num_vertices; i++)
+    {
+        free(vertices[i]->reachables);
+        free(vertices[i]);
+    }
+    
+    free(vertices);
+}   
 
 int check_serial(transacao_t **escalation, int n){
     num_vertices = 0;
@@ -123,12 +133,16 @@ int check_serial(transacao_t **escalation, int n){
                         for(int r = 0; r < t2->num_ops; r++){
                             if(t2->ops[r]->operation != COMMIT){
                                 if(t2->ops[r]->time < t1->ops[j]->time){
-                                    if (new_edge(t2, t1) == -1)
+                                    if (new_edge(t2, t1) == -1){
+                                        destroy_serial();
                                         return FAIL_RETURN;
+                                    }
                                 }else{
                                     if(t2->ops[r]->operation == READ){
-                                        if (new_edge(t1, t2) == -1)
+                                        if (new_edge(t1, t2) == -1){
+                                            destroy_serial();    
                                             return FAIL_RETURN;
+                                        }
                                     }
                                 }
                             }
@@ -139,6 +153,7 @@ int check_serial(transacao_t **escalation, int n){
         
         }
     }
-
+    destroy_serial();
     return SUCCESS_RETURN;
 }
+

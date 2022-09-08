@@ -121,7 +121,7 @@ int is_serial(){
 }
 
 int is_equivalent(){
-    return FAIL_RETURN;
+    return check_view(transacao_list, num_transicoes);
 }
 
 

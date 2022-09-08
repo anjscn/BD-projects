@@ -4,6 +4,7 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include "serial.h"
+    #include "visao.h"
     #include "header.h"
 
     #define SUCCESS_RETURN 1
