@@ -10,7 +10,7 @@
 #include "visao.h"
 
 transacao_t **original;
-
+char attribute;
 
 void troca(transacao_t **e, int l, int i ) { 
     transacao_t* temp = e[l];
@@ -21,11 +21,33 @@ void troca(transacao_t **e, int l, int i ) {
 operacoes_t* seleciona_ultima_op_em_t(transacao_t* t, char op){
     
     for (int i = t->num_ops-1;  i >= 0; i--) {
-        if(t->ops[i]->operation == op){
-            return t->ops[i];
+        fprintf(stderr, " %d : att %c %c contra %c %c\n", i, t->ops[i]->operation, t->ops[i]->attribute, op, attribute);
+        if((t->ops[i]->operation == op)){
+            if(t->ops[i]->attribute == attribute){
+                fprintf(stderr, "Retorna esse msmaaaaaaaaaaaaa\n");
+                
+                return t->ops[i];
+            }
         }
     }
-    fprintf(stderr, "Nulo\n");
+    fprintf(stderr, "Nulo ultimo\n");
+    return NULL;
+}
+
+operacoes_t* seleciona_primeira_op_em_t(transacao_t* t, char op){
+    
+    for (int i = 0; i < t->num_ops; i++) {
+        fprintf(stderr, "att %c contra %c\n",  t->ops[i]->attribute, attribute);
+        if((t->ops[i]->operation == op)){
+            if(t->ops[i]->attribute == attribute){
+                fprintf(stderr, "Retorna esse msmaaaaaaaaaaaaa\n");
+                
+                return t->ops[i];
+            }
+        }
+    }
+    fprintf(stderr, "Nulo primeiro\n");
+    
     return NULL;
 }
 
@@ -62,16 +84,6 @@ int valida_ultimo(transacao_t **a, int n){
     return 1;
 }
 
-operacoes_t* seleciona_primeira_op_em_t(transacao_t* t, char op){
-    
-    for (int i = 0; i < t->num_ops; i++) {
-        if(t->ops[i]->operation == op){
-            return t->ops[i];
-        }
-    }
-    
-    return NULL;
-}
 
 int seleciona_w_previos (transacao_t ** antecessoras, int time, int n) {
     int qnt = 0;
@@ -188,9 +200,12 @@ int permuta (transacao_t** e, int l, int r){
 }
 
 
-int check_view(transacao_t **escalation, int n){
+int check_view(transacao_t **escalation, int n, char att){
     original = escalation;
-    
+    attribute = att;
+
+    fprintf(stderr, "!!!!!!!!!!!!!1 Fazendo para %c\n", attribute);
+
     transacao_t ** permutada = malloc(n*sizeof(transacao_t*));
     for(int i = 0; i < n; i++){
         permutada[i] = original[i];

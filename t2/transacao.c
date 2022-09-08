@@ -5,6 +5,10 @@ int num_active_transactions;
 
 int num_escalonamento_finalizado;
 
+
+char attribute_list[MAX_OPS];
+int num_attributes = 0;
+
 transacao_t** transacao_list;
 
 int init_transactions(){
@@ -32,6 +36,20 @@ transacao_t* find_transation(int transation_id){
     return NULL;
 }
 
+void add_attribute(transacao_t *t, char att){
+    fprintf(stderr, "Adicionando atribute %c. Temos %d\n", att , num_attributes);
+    if(att == '-') return;
+    for(int i = 0; i < num_attributes; i++){
+        if(attribute_list[i] == att){
+            fprintf(stderr, "Já tem\n" );
+            return;
+        }
+    }
+    attribute_list[num_attributes] = att;
+    num_attributes++;
+    fprintf(stderr, "Adicionado atribute %c\n",attribute_list[num_attributes-1] );
+}
+
 int new_ops(int transaction_id, int time, char operation, char attribute){
     transacao_t* t = find_transation(transaction_id);
      
@@ -56,6 +74,7 @@ int new_ops(int transaction_id, int time, char operation, char attribute){
 
     t->num_ops ++;
 
+    add_attribute(t, attribute);
 
     if(ops->operation == COMMIT){
         num_active_transactions--;
@@ -73,6 +92,7 @@ transacao_t* new_transaction(int transaction_id){
     
     t->transation_id = transaction_id;
     t->num_ops = 0;
+    
 
     for (int i = 0; i < MAX_OPS; i++) {
         t->ops[i] = NULL;
@@ -121,17 +141,16 @@ int is_serial(){
 }
 
 int is_equivalent(){
-    int a =check_view(transacao_list, num_transicoes); 
-    fprintf(stderr, "Equivalencia %d\n", a);
-    
-    return a;
+    for(int i = 0; i < num_attributes; i++){
+        if (!check_view(transacao_list, num_transicoes, attribute_list[i])){
+            return 0;
+        }
+    }
+    return 1;
 }
 
 
 int check_serial_equivalent(){
-
-
-
     fprintf(stdout, "%d ", num_escalonamento_finalizado);
 
     // Imprime lista de transações no escalonamento
@@ -140,7 +159,7 @@ int check_serial_equivalent(){
     }
     fprintf(stdout, "%d ", transacao_list[num_transicoes-1]->transation_id);
 
-
+    
 
     ( is_serial() ? fprintf(stdout, "SS ") : fprintf(stdout, "NS ") );
     ( is_equivalent() ? fprintf(stdout, "SV\n") : fprintf(stdout, "NV\n") );
@@ -160,6 +179,7 @@ int clear_transactions(){
     }
 
     num_transicoes = 0;
+    num_attributes = 0;
 
     return SUCCESS_RETURN;
 }

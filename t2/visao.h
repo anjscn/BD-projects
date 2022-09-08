@@ -15,6 +15,6 @@
     #include <stdio.h>
 
     // Checa se as n primeiras transições são equivalentes
-    int check_view(transacao_t **escalation, int n);
+    int check_view(transacao_t **escalation, int n, char attribute);
 
 #endif

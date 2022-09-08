@@ -32,7 +32,9 @@
         int transation_id;
         int num_ops;
         operacoes_t* ops[MAX_OPS * sizeof(operacoes_t*)];
+
     } transacao_t;
 
+    
 
 #endif
