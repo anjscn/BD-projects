@@ -37,17 +37,13 @@ transacao_t* find_transation(int transation_id){
 }
 
 void add_attribute(transacao_t *t, char att){
-    fprintf(stderr, "Adicionando atribute %c. Temos %d\n", att , num_attributes);
     if(att == '-') return;
-    for(int i = 0; i < num_attributes; i++){
-        if(attribute_list[i] == att){
-            fprintf(stderr, "Já tem\n" );
+    for(int i = 0; i < num_attributes; i++)
+        if(attribute_list[i] == att)
             return;
-        }
-    }
+    
     attribute_list[num_attributes] = att;
     num_attributes++;
-    fprintf(stderr, "Adicionado atribute %c\n",attribute_list[num_attributes-1] );
 }
 
 int new_ops(int transaction_id, int time, char operation, char attribute){
@@ -55,12 +51,12 @@ int new_ops(int transaction_id, int time, char operation, char attribute){
      
     if(!t){
         t = new_transaction(transaction_id);
-        if(t == NULL)  { fprintf(stderr, "Erro ops1\n"); return FAIL_RETURN; }
+        if(t == NULL) return FAIL_RETURN;
     }
 
-    if( !(t->num_ops < MAX_OPS) ) { fprintf(stderr, "Erro ops2\n"); return FAIL_RETURN; }
+    if( !(t->num_ops < MAX_OPS) ) return FAIL_RETURN; 
     
-    if( t->num_ops > 0 && (t->ops[t->num_ops-1]->operation == COMMIT) ) { fprintf(stderr, "Erro ops3\n"); return FAIL_RETURN; } // Se já houve commit
+    if( t->num_ops > 0 && (t->ops[t->num_ops-1]->operation == COMMIT) )  return FAIL_RETURN; // Se já houve commit
 
     operacoes_t* ops = malloc(sizeof(operacoes_t));
 
@@ -69,8 +65,6 @@ int new_ops(int transaction_id, int time, char operation, char attribute){
     ops->attribute = attribute;
     
     t->ops[t->num_ops] = ops;
-
-    fprintf(stderr, "Created new operation at Tr%d pos%d op%d - %p\n\n", transaction_id, t->num_ops, ops->time, ops);
 
     t->num_ops ++;
 
@@ -100,9 +94,6 @@ transacao_t* new_transaction(int transaction_id){
     
 
     transacao_list[num_transicoes] = t;
-
-
-    fprintf(stderr, "Created new transaction at pos%d(id%d) - %p <<<<\n", num_transicoes, transaction_id, t);
 
 
     num_transicoes++;
@@ -164,13 +155,11 @@ int check_serial_equivalent(){
     }
     fprintf(stdout, "%d ", transacao_list[num_transicoes-1]->transation_id);
 
-    
 
     ( is_serial() ? fprintf(stdout, "SS ") : fprintf(stdout, "NS ") );
     ( is_equivalent() ? fprintf(stdout, "SV\n") : fprintf(stdout, "NV\n") );
 
-
-    return FAIL_RETURN;
+    return SUCCESS_RETURN;
 }
 
 int clear_transactions(){

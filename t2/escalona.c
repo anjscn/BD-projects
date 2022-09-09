@@ -26,13 +26,11 @@ int main(int argc, char *argv[])
 
     while (scanf ("%d %d %c %c", &time, &transation_id, &operation, &attribute) != EOF) {
         
-        fprintf(stderr, "t%d -> %d:%c(%c)\n", time, transation_id, operation, attribute);
         
         new_ops(transation_id, time, operation, attribute);
 
         if(num_active_transactions == 0){
             check_serial_equivalent();
-            print_transactions();
             clear_transactions();
         }
     }
@@ -41,6 +39,5 @@ int main(int argc, char *argv[])
 
     end_transactions();
 
-    fprintf (stderr, "Pronto cabo\n");
     return 0;
 }

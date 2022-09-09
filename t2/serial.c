@@ -98,7 +98,6 @@ int new_edge(transacao_t *t1, transacao_t *t2){
     }
 
     
-    //fprintf(stderr, "cria aresta %d-%d\n", t1->transation_id, t2->transation_id);
     return SUCCESS_RETURN;
 }
 
