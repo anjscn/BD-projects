@@ -23,10 +23,9 @@ int main(int argc, char *argv[])
 
     init_transactions();
 
+    while (scanf ("%d %d %c %c", &time, &transation_id,
+                         &operation, &attribute) != EOF) {
 
-    while (scanf ("%d %d %c %c", &time, &transation_id, &operation, &attribute) != EOF) {
-        
-        
         new_ops(transation_id, time, operation, attribute);
 
         if(num_active_transactions == 0){
@@ -35,9 +34,8 @@ int main(int argc, char *argv[])
         }
     }
 
-
-
     end_transactions();
+
 
     return 0;
 }

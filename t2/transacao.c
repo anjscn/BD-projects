@@ -27,6 +27,29 @@ int init_transactions(){
     return SUCCESS_RETURN;
 }
 
+transacao_t* new_transaction(int transaction_id){
+    if( !(num_transicoes < MAX_TRANSACOES) ) return NULL; // Alcançou o máximo de transicoes
+
+    transacao_t* t = malloc(sizeof(transacao_t));
+    
+    t->transation_id = transaction_id;
+    t->num_ops = 0;
+    
+
+    for (int i = 0; i < MAX_OPS; i++) {
+        t->ops[i] = NULL;
+    }
+    
+
+    transacao_list[num_transicoes] = t;
+
+
+    num_transicoes++;
+    num_active_transactions++;
+
+    return t;
+}
+
 // Encontra transação de id transation_id em tss
 transacao_t* find_transation(int transation_id){
     for (int i = 0; i < num_transicoes; i++) {
@@ -79,28 +102,6 @@ int new_ops(int transaction_id, int time, char operation, char attribute){
     return SUCCESS_RETURN;
 }
 
-transacao_t* new_transaction(int transaction_id){
-    if( !(num_transicoes < MAX_TRANSACOES) ) return NULL; // Alcançou o máximo de transicoes
-
-    transacao_t* t = malloc(sizeof(transacao_t));
-    
-    t->transation_id = transaction_id;
-    t->num_ops = 0;
-    
-
-    for (int i = 0; i < MAX_OPS; i++) {
-        t->ops[i] = NULL;
-    }
-    
-
-    transacao_list[num_transicoes] = t;
-
-
-    num_transicoes++;
-    num_active_transactions++;
-
-    return t;
-}
 
 int print_transactions(){
     fprintf(stderr, "<-----PRINT------>\n");

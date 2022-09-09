@@ -127,7 +127,6 @@ int valida_w_antes_de_r(transacao_t **a, int n){
     // encontra ultimo r em Ti de tempo t
     // percorre antecessores e anota quem possui write com tempo < t
     // verifica se de fato vem antes
-    // 
 
     transacao_t** antecessoras = malloc( (n-1) * sizeof(transacao_t*)); // lista de transações que devem preceder a atual
 
@@ -146,7 +145,8 @@ int valida_w_antes_de_r(transacao_t **a, int n){
                             return FAIL_RETURN;
                     }
                 }
-            } else if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == FAIL_RETURN){
+            } else 
+            if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == FAIL_RETURN){
                 return FAIL_RETURN;
             }
         }
@@ -156,10 +156,12 @@ int valida_w_antes_de_r(transacao_t **a, int n){
 }
 
 
-int compara(transacao_t **a, int n){
-    if(!valida_ultimo(a, n)) return FAIL_RETURN;
-    if(!valida_w_antes_de_r(a, n)) return FAIL_RETURN;
+int compara(transacao_t **permuta, int n){
+    if(!valida_ultimo(permuta, n)) 
+        return FAIL_RETURN;
 
+    if(!valida_w_antes_de_r(permuta, n)) 
+        return FAIL_RETURN;
 
     return SUCCESS_RETURN;
 }
@@ -195,7 +197,10 @@ int permuta (transacao_t** e, int l, int r){
 int check_view(transacao_t **escalation, int n, char att){
     original = escalation;
     attribute = att;
+
     transacao_t ** permutada = malloc(n*sizeof(transacao_t*));
+    
+    // Copia transações da original para a permutada
     for(int i = 0; i < n; i++){
         permutada[i] = original[i];
     }
