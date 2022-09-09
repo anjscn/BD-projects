@@ -20,6 +20,6 @@
 
 
     // Checa se as n primeiras transições são serializaveis
-    int check_serial(transacao_t **escalation, int n);
+    int check_serial(transacao_t **escalation, int n, char att);
 
 #endif

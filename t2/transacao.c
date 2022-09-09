@@ -137,7 +137,12 @@ int print_transactions(){
 
 
 int is_serial(){
-    return check_serial(transacao_list, num_transicoes);
+    for(int i = 0; i < num_attributes; i++){
+        if (!check_serial(transacao_list, num_transicoes, attribute_list[i])){
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int is_equivalent(){

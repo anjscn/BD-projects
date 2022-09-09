@@ -37,7 +37,7 @@ operacoes_t* seleciona_ultima_op_em_t(transacao_t* t, char op){
 operacoes_t* seleciona_primeira_op_em_t(transacao_t* t, char op){
     
     for (int i = 0; i < t->num_ops; i++) {
-        fprintf(stderr, "att %c contra %c\n",  t->ops[i]->attribute, attribute);
+        fprintf(stderr, " %d : att %c %c contra %c %c\n", i, t->ops[i]->operation, t->ops[i]->attribute, op, attribute);
         if((t->ops[i]->operation == op)){
             if(t->ops[i]->attribute == attribute){
                 fprintf(stderr, "Retorna esse msmaaaaaaaaaaaaa\n");
@@ -77,26 +77,26 @@ int valida_ultimo(transacao_t **a, int n){
 
     fprintf(stderr, "original:%d, a:%d \n", time_last_w_original, time_last_w_a);
 
-    if(time_last_w_original == -1){ return 0;}    
+    if(time_last_w_original == -1){ return SUCCESS_RETURN;} // Caso não tenha w no original, retorne SUCESSO
 
-    if(time_last_w_a != time_last_w_original){ return 0; }
+    if(time_last_w_a == time_last_w_original){ return SUCCESS_RETURN; } // Caso tenha w e é igual ao permutado, retorne SUCESSO
 
-    return 1;
+    return FAIL_RETURN;
 }
 
 
 int seleciona_w_previos (transacao_t ** antecessoras, int time, int n) {
     int qnt = 0;
-    fprintf(stderr, "%d precisa ter ", time);
+    fprintf(stderr, "%d precisa ter : ", time);
     for (int i = 0; i < n; i++) {
-        operacoes_t* primeiro_r = seleciona_primeira_op_em_t(original[i], READ);
+        operacoes_t* primeiro_r = seleciona_primeira_op_em_t(original[i], WRITE);
         if( (primeiro_r) && (primeiro_r->time < time) ) {
-            fprintf(stderr, "%d ", original[i]->transation_id);
+            fprintf(stderr, "<%d> ", original[i]->transation_id);
             antecessoras[qnt] = original[i];
             qnt++;
         }
     }
-    fprintf(stderr, "ocorrendo antes\n");
+    fprintf(stderr, "ocorrendo antes. No total %d\n", qnt);
     return qnt;
 }
 
@@ -111,12 +111,15 @@ int remove_da_lista (int id, transacao_t** lista, int tam_lista) {
 }
 
 int verifica_previos (transacao_t** lista, int tam_lista, transacao_t** a, int id, int tam_a) {
+    if(tam_lista == 0) return  SUCCESS_RETURN;
+    
+
     fprintf(stderr, "%d: Ocorrem: ", tam_lista);
     int faltam = tam_lista;
     for(int i = 0; i < tam_a; i++) {
         if(a[i]->transation_id == id){
             fprintf(stderr, ". Vish, cabou\n");
-            return -1;
+            return FAIL_RETURN;
         }
 
         if(remove_da_lista(a[i]->transation_id, lista, tam_lista) == 1){
@@ -124,14 +127,14 @@ int verifica_previos (transacao_t** lista, int tam_lista, transacao_t** a, int i
             faltam --;
         }
 
-        if(faltam == 1){
+        if(faltam <= 1){
             fprintf(stderr, "! Todos\n");
-            return 0;
+            return SUCCESS_RETURN;
         }
     }
     fprintf(stderr, ". E só, faltaram %d\n", faltam);
 
-    return -1;
+    return FAIL_RETURN;
 }
 
 int valida_w_antes_de_r(transacao_t **a, int n){
@@ -149,24 +152,33 @@ int valida_w_antes_de_r(transacao_t **a, int n){
         last_r_original = seleciona_ultima_op_em_t(original[i], READ);
         if(last_r_original){
             qnt = seleciona_w_previos(antecessoras, last_r_original->time, n);
-            if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == -1){
-                return 0;
+
+            if(qnt == 0){ // Caso especial, vamos garantir que no permutado também não tem write antes
+                for(int j = 0; j < n; j++){
+                    if(a[j] == original[i]) j = n;
+                    else {
+                        if(seleciona_primeira_op_em_t(a[j], WRITE) != NULL)
+                            return FAIL_RETURN;
+                    }
+                }
+            }else if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == FAIL_RETURN){
+                return FAIL_RETURN;
             }
         }
     }
 
-    return 1;
+    return SUCCESS_RETURN;
 }
 
 
 int compara(transacao_t **a, int n){
-    if(!valida_ultimo(a, n)) return -1;
+    if(!valida_ultimo(a, n)) return FAIL_RETURN;
 fprintf(stderr, "É valido 1\n");
-    if(!valida_w_antes_de_r(a, n)) return -1;
+    if(!valida_w_antes_de_r(a, n)) return FAIL_RETURN;
 fprintf(stderr, "É valido 2\n");
 
 
-    return 0;
+    return SUCCESS_RETURN;
 }
 
 
@@ -188,15 +200,15 @@ int permuta (transacao_t** e, int l, int r){
     if(l == r){
         printa(e, r);
         printa(original, r);
-        if(compara(e, r) == 0) return 0;
+        if(compara(e, r) == SUCCESS_RETURN) return SUCCESS_RETURN;  // Se um dos permutados der certo, é equivalente por visão
     }
 
     for(int i = l; i < r; i++){
         troca(e, l, i);
-        if(permuta(e, l+1, r) == 0) return 0;
+        if(permuta(e, l+1, r) == SUCCESS_RETURN) return SUCCESS_RETURN;
         troca(e, l, i);
     }
-    return -1;
+    return FAIL_RETURN; // Se nenhum dos permutados der certo, não é equivalente por visão
 }
 
 
@@ -211,11 +223,9 @@ int check_view(transacao_t **escalation, int n, char att){
         permutada[i] = original[i];
     }
 
-    int p = permuta(permutada, 0, n);
+    int answer = permuta(permutada, 0, n);
 
     free(permutada);
 
-    if(p == -1)
-        return 0;
-    return 1;
+    return answer;
 }

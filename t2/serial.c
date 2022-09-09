@@ -113,7 +113,7 @@ void destroy_serial(){
     free(vertices);
 }   
 
-int check_serial(transacao_t **escalation, int n){
+int check_serial(transacao_t **escalation, int n, char att){
     num_vertices = 0;
 
     max_num_vertices = n;
@@ -126,12 +126,12 @@ int check_serial(transacao_t **escalation, int n){
         t1 = escalation[i];
         for(int j = 0; j < t1->num_ops; j++){
 
-            if(t1->ops[j]->operation == WRITE){ // Acomoda todos os casos
+            if((t1->ops[j]->operation == WRITE) && (t1->ops[j]->attribute == att)){ // Acomoda todos os casos
                 for(int k = 0; k < n; k++){
                     if(k != i){
                         t2 = escalation[k];
                         for(int r = 0; r < t2->num_ops; r++){
-                            if(t2->ops[r]->operation != COMMIT){
+                            if((t2->ops[r]->operation != COMMIT) && ((t2->ops[r]->attribute == att))){
                                 if(t2->ops[r]->time < t1->ops[j]->time){
                                     if (new_edge(t2, t1) == -1){
                                         destroy_serial();

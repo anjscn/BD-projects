@@ -7,9 +7,6 @@
     #include "visao.h"
     #include "header.h"
 
-    #define SUCCESS_RETURN 1
-    #define FAIL_RETURN 0
-
 
 
     extern int num_active_transactions;

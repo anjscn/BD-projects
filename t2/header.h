@@ -18,6 +18,11 @@
     #define READ 'R'
     #define WRITE 'W'
 
+
+    #define SUCCESS_RETURN 1
+    #define FAIL_RETURN 0
+
+
     #define MAX_TRANSACOES 10
     #define MAX_OPS 50
 
