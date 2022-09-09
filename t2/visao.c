@@ -161,7 +161,7 @@ int valida_w_antes_de_r(transacao_t **a, int n){
                             return FAIL_RETURN;
                     }
                 }
-            }else if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == FAIL_RETURN){
+            } else if(verifica_previos(antecessoras, qnt, a, original[i]->transation_id, n) == FAIL_RETURN){
                 return FAIL_RETURN;
             }
         }
